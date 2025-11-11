@@ -27,54 +27,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Get changed files
-        id: changed-files
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            # Process all directories on manual trigger
-            echo "Processing all directories"
-            changed_dirs=$(find . -maxdepth 1 -type d ! -name '.' ! -name '..*' ! -name '.github' -exec basename {} \; | tr '\n' ' ')
-          else
-            # Get changed files and extract unique directories
-            if [ "${{ github.event_name }}" = "pull_request" ]; then
-              base_ref="${{ github.event.pull_request.base.sha }}"
-              head_ref="${{ github.event.pull_request.head.sha }}"
-            else
-              base_ref="${{ github.event.before }}"
-              head_ref="${{ github.sha }}"
-            fi
-
-            changed_files=$(git diff --name-only $base_ref $head_ref | grep -E '\.(yaml|txt)$' || true)
-
-            if [ -z "$changed_files" ]; then
-              echo "No yaml or txt files changed"
-              changed_dirs=""
-            else
-              changed_dirs=$(echo "$changed_files" | cut -d'/' -f1 | grep -v '^\.github$' | sort -u | tr '\n' ' ')
-            fi
-          fi
-
-          echo "dirs=$changed_dirs" >> $GITHUB_OUTPUT
-          echo "Changed directories: $changed_dirs"
 
       - name: Create output directory
         run: mkdir -p output
 
       - name: Concatenate files
         run: |
-          changed_dirs="${{ steps.changed-files.outputs.dirs }}"
+          # Find all directories (excluding .github)
+          for dir in */; do
+            # Remove trailing slash
+            dir_name="${dir%/}"
 
-          if [ -z "$changed_dirs" ]; then
-            echo "No directories to process"
-            exit 0
-          fi
-
-          for dir_name in $changed_dirs; do
-            # Skip if directory doesn't exist
-            if [ ! -d "$dir_name" ]; then
+            # Skip .github directory
+            if [ "$dir_name" = ".github" ] || [ "$dir_name" = "output" ] || [ "$dir_name" = "docs" ]; then
               continue
             fi
 
