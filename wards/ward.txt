@@ -1,0 +1,6 @@
+[out:json][timeout:800];
+area[type=boundary][admin_level=4][wikidata=Q3551781]({{bbox}})->.dc;
+(
+  relation[boundary=administrative][admin_level=9](area.dc);
+);
+out geom;

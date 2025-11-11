@@ -1,0 +1,137 @@
+name: Concatenate YAML and TXT files
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "*/**.yaml"
+      - "*/**.txt"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "*/**.yaml"
+      - "*/**.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  concatenate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Process all directories on manual trigger
+            echo "Processing all directories"
+            changed_dirs=$(find . -maxdepth 1 -type d ! -name '.' ! -name '..*' ! -name '.github' -exec basename {} \; | tr '\n' ' ')
+          else
+            # Get changed files and extract unique directories
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              base_ref="${{ github.event.pull_request.base.sha }}"
+              head_ref="${{ github.event.pull_request.head.sha }}"
+            else
+              base_ref="${{ github.event.before }}"
+              head_ref="${{ github.sha }}"
+            fi
+
+            changed_files=$(git diff --name-only $base_ref $head_ref | grep -E '\.(yaml|txt)$' || true)
+
+            if [ -z "$changed_files" ]; then
+              echo "No yaml or txt files changed"
+              changed_dirs=""
+            else
+              changed_dirs=$(echo "$changed_files" | cut -d'/' -f1 | grep -v '^\.github$' | sort -u | tr '\n' ' ')
+            fi
+          fi
+
+          echo "dirs=$changed_dirs" >> $GITHUB_OUTPUT
+          echo "Changed directories: $changed_dirs"
+
+      - name: Create output directory
+        run: mkdir -p output
+
+      - name: Concatenate files
+        run: |
+          changed_dirs="${{ steps.changed-files.outputs.dirs }}"
+
+          if [ -z "$changed_dirs" ]; then
+            echo "No directories to process"
+            exit 0
+          fi
+
+          for dir_name in $changed_dirs; do
+            # Skip if directory doesn't exist
+            if [ ! -d "$dir_name" ]; then
+              continue
+            fi
+
+            # Check if both yaml and txt files exist with matching names
+            yaml_file="${dir_name}/${dir_name}.yaml"
+            txt_file="${dir_name}/${dir_name}.txt"
+            output_file="output/${dir_name}.ultra"
+
+            if [ -f "$yaml_file" ] && [ -f "$txt_file" ]; then
+              echo "Processing $dir_name..."
+
+              # Create combined file with --- delimiters around YAML
+              echo "---" > "$output_file"
+              cat "$yaml_file" >> "$output_file"
+              echo "---" >> "$output_file"
+              cat "$txt_file" >> "$output_file"
+
+              echo "Created $output_file"
+            else
+              echo "Skipping $dir_name (missing yaml or txt file)"
+            fi
+          done
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add output/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-generate combined files"
+            git push
+          fi
+
+  deploy:
+    needs: concatenate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./docs"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

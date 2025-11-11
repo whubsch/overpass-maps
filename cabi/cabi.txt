@@ -1,0 +1,5 @@
+[out:json][timeout:800][bbox:38.499818,-77.724152,39.282231,-76.566467];
+(
+  nwr[amenity=bicycle_rental][bicycle_rental=docking_station]["brand:wikidata"=Q1034635];
+);
+out center;

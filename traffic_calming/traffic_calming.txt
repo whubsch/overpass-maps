@@ -1,0 +1,6 @@
+[out:json][timeout:800];
+area[type=boundary][admin_level=4][wikidata=Q3551781]({{bbox}})->.dc;
+(
+node[traffic_calming](area.dc);
+);
+out center;

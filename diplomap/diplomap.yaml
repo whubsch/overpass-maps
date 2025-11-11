@@ -1,0 +1,59 @@
+name: Diplomap
+description: Welcome to the capital of the world! Check out the embassies, consulates, and residences used by diplomats from around the globe.
+style:
+  extends: https://styles.trailsta.sh/protomaps-light.json
+  layers:
+    - type: symbol
+      layout:
+        icon-image:
+          - case
+          - [==, [get, embassy], residence]
+          - maki:home
+          - [==, [get, consulate], residence]
+          - maki:home
+          - [==, [get, diplomatic], embassy]
+          - maki:embassy
+          - [==, [get, diplomatic], consulate]
+          - maki:town-hall
+          - [==, [get, diplomatic], liaison]
+          - maki:building
+          - maki:embassy
+        icon-size: 0.6
+        icon-allow-overlap: false
+        icon-ignore-placement: false
+        text-field:
+          - coalesce
+          - [get, name]
+          - [get, "name:en"]
+          - [get, country]
+        text-font: ["Noto Sans Regular"]
+        text-size: 11
+        text-anchor: top
+        text-offset: [0, 1.5]
+        text-optional: true
+        text-max-width: 12
+      paint:
+        icon-color: "#ffffff"
+        icon-halo-color:
+          - case
+          - [==, [get, embassy], residence]
+          - "#dc2626"
+          - [==, [get, consulate], residence]
+          - "#dc2626"
+          - [==, [get, diplomatic], embassy]
+          - "#1e40af"
+          - [==, [get, diplomatic], consulate]
+          - "#7c3aed"
+          - [==, [get, diplomatic], liaison]
+          - "#059669"
+          - "#1e40af"
+        icon-halo-width: 10
+        text-color: "#1f2937"
+        text-halo-color: "#ffffff"
+        text-halo-width: 1.5
+        text-opacity:
+          - step
+          - [zoom]
+          - 0
+          - 14
+          - 1

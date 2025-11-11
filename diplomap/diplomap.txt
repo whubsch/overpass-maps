@@ -1,0 +1,9 @@
+[out:json][timeout:800][bbox:38.681758,-77.290878,39.070912,-76.769714];
+(
+  nwr[office=diplomatic][diplomatic=embassy];
+  nwr[office=diplomatic][diplomatic=consulate];
+  nwr[office=diplomatic][diplomatic=liaison];
+  nwr[office=diplomatic][embassy=residence];
+  nwr[office=diplomatic][consulate=residence];
+);
+out center;

@@ -1,0 +1,20 @@
+name: Traffic calming in DC
+description: See the wide array of traffic calming measures the District has deployed to slow drivers down.
+style:
+  extends: https://styles.trailsta.sh/protomaps-light.json
+  layers:
+    - type: symbol
+      layout:
+        icon-image:
+          - match
+          - [get, traffic_calming]
+          - table
+          - https://simonpoole.github.io/beautified-JOSM-preset/icons/png/transport_table_18048.png
+          - hump
+          - https://simonpoole.github.io/beautified-JOSM-preset/icons/png/transport_cushion_18044.png
+          - rumble_strip
+          - https://simonpoole.github.io/beautified-JOSM-preset/icons/png/transport_rumble_strip_18047.png
+          - https://simonpoole.github.io/beautified-JOSM-preset/icons/png/transport_speedbump.png
+        icon-size: 0.35
+        icon-allow-overlap: false
+        icon-ignore-placement: true

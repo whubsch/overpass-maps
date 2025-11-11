@@ -1,0 +1,79 @@
+name: The Eight Wards of DC
+description: See DC's 8 wards. Which one are you in?
+style:
+  extends: https://api.protomaps.com/styles/v5/white/en.json?key=f8eceeaad6896c92
+  layers:
+    - type: fill
+      paint:
+        fill-color:
+          - match
+          - [get, name]
+          - "Ward 1"
+          - "#ef4444"
+          - "Ward 2"
+          - "#f97316"
+          - "Ward 3"
+          - "#eab308"
+          - "Ward 4"
+          - "#22c55e"
+          - "Ward 5"
+          - "#06b6d4"
+          - "Ward 6"
+          - "#3b82f6"
+          - "Ward 7"
+          - "#8b5cf6"
+          - "Ward 8"
+          - "#ec4899"
+          - "#9ca3af"
+        fill-opacity: 0.4
+    - type: line
+      paint:
+        line-color:
+          - match
+          - [get, name]
+          - "Ward 1"
+          - "#dc2626"
+          - "Ward 2"
+          - "#ea580c"
+          - "Ward 3"
+          - "#ca8a04"
+          - "Ward 4"
+          - "#16a34a"
+          - "Ward 5"
+          - "#0891b2"
+          - "Ward 6"
+          - "#2563eb"
+          - "Ward 7"
+          - "#7c3aed"
+          - "Ward 8"
+          - "#db2777"
+          - "#6b7280"
+        line-width: 3
+    - type: symbol
+      layout:
+        text-field: [get, name]
+        text-font: ["Noto Sans Bold", "Noto Sans Regular"]
+        text-size: 18
+      paint:
+        text-color:
+          - match
+          - [get, name]
+          - "Ward 1"
+          - "#dc2626"
+          - "Ward 2"
+          - "#ea580c"
+          - "Ward 3"
+          - "#ca8a04"
+          - "Ward 4"
+          - "#16a34a"
+          - "Ward 5"
+          - "#0891b2"
+          - "Ward 6"
+          - "#2563eb"
+          - "Ward 7"
+          - "#7c3aed"
+          - "Ward 8"
+          - "#db2777"
+          - "#1f2937"
+        text-halo-color: "#ffffff"
+        text-halo-width: 2

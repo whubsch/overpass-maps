@@ -1,0 +1,16 @@
+[out:json][timeout:800];
+area[type=boundary][admin_level=4][wikidata=Q3551781]({{bbox}})->.dc;
+(
+  (
+nwr[amenity=restaurant](area.dc);
+nwr[amenity=bar](area.dc);
+nwr[amenity=cafe](area.dc);
+nwr[amenity=fast_food](area.dc);
+nwr[amenity=pub](area.dc);
+);
+- (
+nwr[brand](area.dc);
+nwr["brand:wikidata"](area.dc);
+);
+);
+out center;
