@@ -1,5 +1,13 @@
 name: Neighborhoods of DC
 description: DC is a city of neighborhoods. Check out the neighborhoods, quarters, and suburbs that make up the District.
+options:
+  bounds: [-77.247963, 38.752878, -76.811943, 39.005178]
+controls:
+  - type: GeolocateControl
+    options:
+      positionOptions:
+        enableHighAccuracy: true
+      trackUserLocation: true
 style:
   extends: https://styles.trailsta.sh/protomaps-light.json
   layers:

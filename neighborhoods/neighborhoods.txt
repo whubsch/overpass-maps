@@ -1,6 +1,5 @@
 [out:json][timeout:800];
-area[type=boundary][admin_level=4][wikidata=Q3551781]({{bbox}})->.dc;
-(
+rel(162069);map_to_area->.dc;(
   node[place=suburb](area.dc);
   node[place=quarter](area.dc);
   node[place=neighbourhood](area.dc);

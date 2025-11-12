@@ -1,5 +1,13 @@
 name: The Eight Wards of DC
 description: See DC's 8 wards. Which one are you in?
+options:
+  bounds: [-77.247963, 38.752878, -76.811943, 39.005178]
+controls:
+  - type: GeolocateControl
+    options:
+      positionOptions:
+        enableHighAccuracy: true
+      trackUserLocation: true
 style:
   extends: https://api.protomaps.com/styles/v5/white/en.json?key=f8eceeaad6896c92
   layers:

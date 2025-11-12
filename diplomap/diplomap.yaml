@@ -1,5 +1,14 @@
 name: Diplomap
 description: Welcome to the capital of the world! Check out the embassies, consulates, and residences used by diplomats from around the globe.
+options:
+  bounds: [-77.247963, 38.752878, -76.811943, 39.005178]
+controls:
+  - type: GeolocateControl
+    options:
+      positionOptions:
+        enableHighAccuracy: true
+      trackUserLocation: true
+
 style:
   extends: https://styles.trailsta.sh/protomaps-light.json
   layers:
