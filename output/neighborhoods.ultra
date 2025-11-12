@@ -1,0 +1,85 @@
+---
+name: Neighborhoods of DC
+description: DC is a city of neighborhoods. Check out the neighborhoods, quarters, and suburbs that make up the District.
+style:
+  extends: https://styles.trailsta.sh/protomaps-light.json
+  layers:
+    - type: symbol
+      layout:
+        icon-image: maki:circle
+        icon-size:
+          - match
+          - [get, place]
+          - suburb
+          - 1.2
+          - quarter
+          - 1.0
+          - neighbourhood
+          - .8
+          - .8
+        icon-allow-overlap: false
+        icon-ignore-placement: false
+        text-field: [get, name]
+        text-font:
+          - case
+          - ["==", [get, place], suburb]
+          - ["literal", ["Noto Sans Bold"]]
+          - ["==", [get, place], quarter]
+          - ["literal", ["Noto Sans Medium", "Noto Sans Regular"]]
+          - ["literal", ["Noto Sans Regular"]]
+        text-size:
+          - match
+          - [get, place]
+          - suburb
+          - 16
+          - quarter
+          - 14
+          - neighbourhood
+          - 14
+          - 11
+        text-anchor: top
+        text-offset: [0, 1.2]
+        text-optional: true
+        text-max-width: 12
+      paint:
+        icon-color:
+          - match
+          - [get, place]
+          - suburb
+          - "#2563eb"
+          - quarter
+          - "#7c3aed"
+          - neighbourhood
+          - "#db2777"
+          - "#6b7280"
+        text-color:
+          - match
+          - [get, place]
+          - suburb
+          - "#1e40af"
+          - quarter
+          - "#6d28d9"
+          - neighbourhood
+          - "#be185d"
+          - "#1f2937"
+        text-halo-color: "#ffffff"
+        text-halo-width: 2
+        text-opacity:
+          - step
+          - [zoom]
+          - 0
+          - 12
+          - ["match", [get, place], "suburb", 1, 0]
+          - 13
+          - ["match", [get, place], ["suburb", "quarter"], 1, 0]
+          - 14
+          - 1
+---
+[out:json][timeout:800];
+area[type=boundary][admin_level=4][wikidata=Q3551781]({{bbox}})->.dc;
+(
+  node[place=suburb](area.dc);
+  node[place=quarter](area.dc);
+  node[place=neighbourhood](area.dc);
+);
+out center;

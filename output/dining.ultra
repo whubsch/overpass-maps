@@ -1,0 +1,62 @@
+---
+name: Independent dining in DC
+description: Check out DC's vibrant independent food scene! This map highlights non-chain restaurants, cafes, bars, and pubs across the District. Perfect for supporting local businesses and staying away from corporate chains.
+style:
+  extends: https://styles.trailsta.sh/protomaps-light.json
+  layers:
+    - type: symbol
+      layout:
+        icon-image:
+          - match
+          - [get, amenity]
+          - restaurant
+          - maki:restaurant
+          - fast_food
+          - maki:fast-food
+          - cafe
+          - maki:cafe
+          - bar
+          - maki:bar
+          - pub
+          - maki:beer
+          - maki:restaurant
+        icon-size: 0.6
+        icon-allow-overlap: false
+        icon-ignore-placement: false
+        text-field: [get, name]
+        text-font: ["Noto Sans Regular"]
+        text-size: 12
+        text-anchor: top
+        text-offset: [0, 1.5]
+        text-optional: true
+        text-max-width: 10
+      paint:
+        icon-color: "#ffffff"
+        icon-halo-color: "#6486f5"
+        icon-halo-width: 10
+        text-color: "#6486f5"
+        text-halo-color: "#ffffff"
+        text-halo-width: 1.5
+        text-opacity:
+          - step
+          - [zoom]
+          - 0
+          - 15
+          - 1
+---
+[out:json][timeout:800];
+area[type=boundary][admin_level=4][wikidata=Q3551781]({{bbox}})->.dc;
+(
+  (
+nwr[amenity=restaurant](area.dc);
+nwr[amenity=bar](area.dc);
+nwr[amenity=cafe](area.dc);
+nwr[amenity=fast_food](area.dc);
+nwr[amenity=pub](area.dc);
+);
+- (
+nwr[brand](area.dc);
+nwr["brand:wikidata"](area.dc);
+);
+);
+out center;
