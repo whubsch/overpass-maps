@@ -176,7 +176,7 @@
 
                             try {
                                 const yamlResponse = await fetch(
-                                    `https://raw.githubusercontent.com/whubsch/overpass-maps/main/${mapName}/${mapName}.yaml`,
+                                    `https://raw.githubusercontent.com/whubsch/overpass-maps/main/data/${mapName}/${mapName}.yaml`,
                                 );
                                 const yamlContent = await yamlResponse.text();
                                 const metadata = parseYamlMetadata(yamlContent);
