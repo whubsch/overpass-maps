@@ -1,6 +1,6 @@
 ---
 options:
-  bounds: [-77.247963, 38.752878, -76.811943, 39.005178]
+  bounds: [-77.128830, 38.797979, -76.900520, 38.993305]
 controls:
   - type: GeolocateControl
     options:
