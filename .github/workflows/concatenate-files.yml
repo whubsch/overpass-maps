@@ -1,94 +1,79 @@
-name: Concatenate YAML and TXT files
+name: Verify Concatenated Files
 
 on:
   push:
     branches:
       - main
     paths:
-      - "*/**.yaml"
-      - "*/**.txt"
+      - "data/*/*.yaml"
+      - "data/*/*.txt"
+      - "scripts/concatenate_files.py"
+      - ".github/workflows/concatenate-files.yml"
+  pull_request:
+    paths:
+      - "data/*/*.yaml"
+      - "data/*/*.txt"
+      - "scripts/concatenate_files.py"
       - ".github/workflows/concatenate-files.yml"
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 
 jobs:
-  concatenate:
+  verify-concatenation:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Create output directory
-        run: mkdir -p output
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-      - name: Concatenate files
+      - name: Run concatenation script
+        run: python3 scripts/concatenate_files.py
+
+      - name: Check for differences
         run: |
-          # Find all directories (excluding .github)
-          for dir in */; do
-            # Remove trailing slash
-            dir_name="${dir%/}"
-
-            # Skip .github directory
-            if [ "$dir_name" = ".github" ] || [ "$dir_name" = "output" ] || [ "$dir_name" = "docs" ]; then
-              continue
-            fi
-
-            # Check if both yaml and txt files exist with matching names
-            yaml_file="${dir_name}/${dir_name}.yaml"
-            txt_file="${dir_name}/${dir_name}.txt"
-            output_file="output/${dir_name}.ultra"
-
-            if [ -f "$yaml_file" ] && [ -f "$txt_file" ]; then
-              echo "Processing $dir_name..."
-
-              # Create combined file with --- delimiters around YAML
-              echo "---" > "$output_file"
-              cat "$yaml_file" >> "$output_file"
-              echo "---" >> "$output_file"
-              cat "$txt_file" >> "$output_file"
-
-              echo "Created $output_file"
-            else
-              echo "Skipping $dir_name (missing yaml or txt file)"
-            fi
-          done
-
-      - name: Commit and push changes
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add output/
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
+          if [ -n "$(git status --porcelain output/)" ]; then
+            echo "❌ ERROR: Generated .ultra files differ from committed versions!"
+            echo ""
+            echo "The following files have differences:"
+            git status --porcelain output/
+            echo ""
+            echo "Diff details:"
+            git diff output/
+            echo ""
+            echo "Please run 'python3 scripts/concatenate_files.py' locally and commit the updated files."
+            exit 1
           else
-            git commit -m "Auto-generate combined files"
-            git push
+            echo "✅ All generated .ultra files match committed versions!"
           fi
 
   deploy:
-    needs: concatenate
+    needs: verify-concatenation
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: main
+        uses: actions/checkout@v5
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: "./docs"
 

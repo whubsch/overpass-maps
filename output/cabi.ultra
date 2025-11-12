@@ -1,6 +1,4 @@
 ---
-name: Capital Bikeshare
-description: The DC region has a lot of Capital Bikeshare stations, and adds more each year. Check out where they are and how much capacity each one has.
 options:
   bounds: [-77.247963, 38.752878, -76.811943, 39.005178]
 controls:
@@ -9,6 +7,8 @@ controls:
       positionOptions:
         enableHighAccuracy: true
       trackUserLocation: true
+name: Capital Bikeshare
+description: The DC region has a lot of Capital Bikeshare stations, and adds more each year. Check out where they are and how much capacity each one has.
 style:
   extends: https://api.protomaps.com/styles/v5/light/en.json?key=f8eceeaad6896c92
   layers:
