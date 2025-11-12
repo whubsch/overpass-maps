@@ -1,6 +1,14 @@
 ---
 name: Traffic calming in DC
 description: See the wide array of traffic calming measures the District has deployed to slow drivers down.
+options:
+  bounds: [-77.247963, 38.752878, -76.811943, 39.005178]
+controls:
+  - type: GeolocateControl
+    options:
+      positionOptions:
+        enableHighAccuracy: true
+      trackUserLocation: true
 style:
   extends: https://styles.trailsta.sh/protomaps-light.json
   layers:
@@ -21,8 +29,7 @@ style:
         icon-ignore-placement: true
 ---
 [out:json][timeout:800];
-area[type=boundary][admin_level=4][wikidata=Q3551781]({{bbox}})->.dc;
-(
+rel(162069);map_to_area->.dc;(
 node[traffic_calming](area.dc);
 );
 out center;

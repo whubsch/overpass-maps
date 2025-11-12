@@ -1,6 +1,14 @@
 ---
 name: Independent dining in DC
 description: Check out DC's vibrant independent food scene! This map highlights non-chain restaurants, cafes, bars, and pubs across the District. Perfect for supporting local businesses and staying away from corporate chains.
+options:
+  bounds: [-77.247963, 38.752878, -76.811943, 39.005178]
+controls:
+  - type: GeolocateControl
+    options:
+      positionOptions:
+        enableHighAccuracy: true
+      trackUserLocation: true
 style:
   extends: https://styles.trailsta.sh/protomaps-light.json
   layers:
@@ -45,8 +53,7 @@ style:
           - 1
 ---
 [out:json][timeout:800];
-area[type=boundary][admin_level=4][wikidata=Q3551781]({{bbox}})->.dc;
-(
+rel(162069);map_to_area->.dc;(
   (
 nwr[amenity=restaurant](area.dc);
 nwr[amenity=bar](area.dc);
