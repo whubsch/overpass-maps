@@ -7,7 +7,113 @@ controls:
       positionOptions:
         enableHighAccuracy: true
       trackUserLocation: true
-popupTemplate: "<div style='font-family: sans-serif; max-width: 300px;'><h3 style='margin: 0 0 8px 0; color: #1e40af; font-size: 15px;'>{{ tags.name | default: 'Unnamed Feature' }}</h3><table style='width: 100%; border-collapse: collapse; font-size: 12px;'>{% for tag in tags %}<tr style='border-bottom: 1px solid #e5e7eb;'><td style='padding: 2px 6px 2px 0; font-weight: 600; color: #6b7280;'>{{ tag[0] }}</td><td style='padding: 2px 0; word-break: break-word;'>{% if tag[0] contains ':wikidata' %}<a href='https://www.wikidata.org/wiki/{{ tag[1] }}' target='_blank' style='color: #3b82f6; text-decoration: none;'>{{ tag[1] }}</a>{% elsif tag[0] contains 'website' %}<a href='{{ tag[1] }}' target='_blank' style='color: #3b82f6; text-decoration: none;'>{{ tag[1] }}</a>{% else %}{{ tag[1] }}{% endif %}</td></tr>{% endfor %}</table><div style='margin: 8px 0 0 0; display: flex; align-items: center; justify-content: space-between;'><p style='margin: 0; font-size: 11px; color: #9ca3af; display: flex; align-items: center; gap: 4px;'>{{ type }} {{ id }} <a href='https://www.openstreetmap.org/{{ type }}/{{ id }}' target='_blank' style='color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center;'>ℹ️</a></p><div style='display: flex; gap: 6px;'><a href='https://www.openstreetmap.org/edit?editor=id&{{ type }}={{ id }}' target='_blank' style='padding: 4px 8px; background: #22c55e; color: white; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: 600;'>iD</a><a href='http://localhost:8111/load_object?objects={{ type | slice: 0 }}{{ id }}' target='_blank' style='padding: 4px 8px; background: #3b82f6; color: white; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: 600;'>JOSM</a><a href='https://rapideditor.org/edit#id={{ type | slice: 0 }}{{ id }}' target='_blank' style='padding: 4px 8px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: 600;'>Rapid</a></div></div></div>"
+popupTemplate: |
+  <div style='font-family: sans-serif; width: 300px;'>
+          <h3 style='margin: 0 0 8px 0; color: #1e40af; font-size: 18px;'>
+            {{ tags.name }}
+          </h3>
+          {% if tags['addr:housenumber'] and tags['addr:street'] %}
+          <p style='margin: 0 0 8px 0; font-size: 15px; color: #4b5563; line-height: 1.4;'>
+            {{ tags['addr:housenumber'] }} {{ tags['addr:street'] }}{% if tags['addr:unit'] %} #{{ tags['addr:unit'] }}{% endif %}
+            {% if tags['addr:city'] or tags['addr:state'] or tags['addr:postcode'] %}
+            <br>
+            {% if tags['addr:city'] %}{{ tags['addr:city'] }}{% if tags['addr:state'] or tags['addr:postcode'] %}, {% endif %}{% endif %}{% if tags['addr:state'] %}{{ tags['addr:state'] }}{% if tags['addr:postcode'] %} {% endif %}{% endif %}{% if tags['addr:postcode'] %}{{ tags['addr:postcode'] }}{% endif %}
+            {% endif %}
+          </p>
+          {% endif %}
+          {% assign phone_number = tags.phone | default: tags['contact:phone'] %}
+          {% if phone_number %}
+          <p style='margin: 0 0 8px 0; font-size: 15px; color: #4b5563;'>
+            <a href='tel:{{ phone_number }}' style='color: #3b82f6; text-decoration: none;'>{{ phone_number }}</a>
+          </p>
+          {% endif %}
+          {% assign credit_cards_yes = false %}
+          {% if tags['payment:credit_cards'] == 'yes' or tags['payment:visa'] == 'yes' and tags['payment:mastercard'] == 'yes' and tags['payment:american_express'] == 'yes' %}
+            {% assign credit_cards_yes = true %}
+          {% endif %}
+          {% assign has_amenities = false %}
+          {% if tags.air_conditioning == 'yes' or tags.air_conditioning == 'no' or tags.outdoor_seating == 'yes' or tags.outdoor_seating == 'no' or tags['payment:cash'] == 'yes' or tags['payment:cash'] == 'no' or credit_cards_yes or tags['payment:credit_cards'] == 'no' or tags.takeaway == 'yes' or tags.takeaway == 'no' or tags.smoking == 'yes' or tags.smoking == 'no' %}
+            {% assign has_amenities = true %}
+          {% endif %}
+          {% if has_amenities %}
+          <div style='margin: 0 0 8px 0; display: flex; gap: 12px; flex-wrap: wrap;'>
+            {% if tags.air_conditioning == 'yes' or tags.air_conditioning == 'no' %}
+            <div style='text-align: center;'>
+              <div style='font-size: 24px; line-height: 1;'>❄️</div>
+              <div style='font-size: 10px; margin-top: 2px; {% if tags.air_conditioning == "no" %}color: #dc2626; text-decoration: line-through;{% else %}color: #4b5563;{% endif %}'>A/C</div>
+            </div>
+            {% endif %}
+            {% if tags.outdoor_seating == 'yes' or tags.outdoor_seating == 'no' %}
+            <div style='text-align: center;'>
+              <div style='font-size: 24px; line-height: 1;'>🪑</div>
+              <div style='font-size: 10px; margin-top: 2px; {% if tags.outdoor_seating == "no" %}color: #dc2626; text-decoration: line-through;{% else %}color: #4b5563;{% endif %}'>Outdoor</div>
+            </div>
+            {% endif %}
+            {% if tags['payment:cash'] == 'yes' or tags['payment:cash'] == 'no' %}
+            <div style='text-align: center;'>
+              <div style='font-size: 24px; line-height: 1;'>💵</div>
+              <div style='font-size: 10px; margin-top: 2px; {% if tags["payment:cash"] == "no" %}color: #dc2626; text-decoration: line-through;{% else %}color: #4b5563;{% endif %}'>Cash</div>
+            </div>
+            {% endif %}
+            {% if credit_cards_yes or tags['payment:credit_cards'] == 'no' %}
+            <div style='text-align: center;'>
+              <div style='font-size: 24px; line-height: 1;'>💳</div>
+              <div style='font-size: 10px; margin-top: 2px; {% if tags["payment:credit_cards"] == "no" %}color: #dc2626; text-decoration: line-through;{% else %}color: #4b5563;{% endif %}'>Card</div>
+            </div>
+            {% endif %}
+            {% if tags.takeaway == 'yes' or tags.takeaway == 'no' %}
+            <div style='text-align: center;'>
+              <div style='font-size: 24px; line-height: 1;'>🥡</div>
+              <div style='font-size: 10px; margin-top: 2px; {% if tags.takeaway == "no" %}color: #dc2626; text-decoration: line-through;{% else %}color: #4b5563;{% endif %}'>Takeaway</div>
+            </div>
+            {% endif %}
+            {% if tags.smoking == 'yes' or tags.smoking == 'no' %}
+            <div style='text-align: center;'>
+              <div style='font-size: 24px; line-height: 1;'>🚬</div>
+              <div style='font-size: 10px; margin-top: 2px; {% if tags.smoking == "no" %}color: #dc2626; text-decoration: line-through;{% else %}color: #4b5563;{% endif %}'>Smoking</div>
+            </div>
+            {% endif %}
+          </div>
+          {% endif %}
+          {% if has_amenities == true %}
+          <hr style='border: none; border-top: 1px solid #e5e7eb; margin: 12px 0;'>
+          {% endif %}
+          <table style='width: 100%; border-collapse: collapse; font-size: 12px;'>
+            {% for tag in tags %}
+            {% unless tag[0] == 'name' or tag[0] == 'addr:housenumber' or tag[0] == 'addr:street' or tag[0] == 'addr:unit' or tag[0] == 'addr:city' or tag[0] == 'addr:state' or tag[0] == 'addr:postcode' or tag[0] == 'addr:country' or tag[0] == 'phone' or tag[0] == 'contact:phone' or tag[0] == 'air_conditioning' or tag[0] == 'outdoor_seating' or tag[0] == 'payment:cash' or tag[0] == 'payment:credit_cards' or tag[0] == 'payment:visa' or tag[0] == 'payment:mastercard' or tag[0] == 'payment:american_express' or tag[0] == 'takeaway' or tag[0] == 'smoking' %}
+            <tr style='border-bottom: 1px solid #e5e7eb;'>
+              <td style='padding: 2px 6px 2px 0; font-weight: 600; color: #6b7280;'>
+                {{ tag[0] }}
+              </td>
+              <td style='padding: 2px 0; word-break: break-word;'>
+                {% if tag[0] contains 'wikidata' %}
+                  <a href='https://www.wikidata.org/wiki/{{ tag[1] }}' target='_blank' style='color: #3b82f6; text-decoration: none;'>{{ tag[1] }}</a>
+                {% elsif tag[0] contains 'website' or tag[0] contains 'url' or tag[1] contains 'http' %}
+                  {% if tag[1] contains 'http' %}
+                    <a href='{{ tag[1] }}' target='_blank' style='color: #3b82f6; text-decoration: none;'>{{ tag[1] }}</a>
+                  {% else %}
+                    <a href='https://{{ tag[1] }}' target='_blank' style='color: #3b82f6; text-decoration: none;'>{{ tag[1] }}</a>
+                  {% endif %}
+                {% else %}
+                  {{ tag[1] }}
+                {% endif %}
+              </td>
+            </tr>
+            {% endunless %}
+            {% endfor %}
+          </table>
+          <div style='margin: 8px 0 0 0; display: flex; align-items: center; justify-content: space-between;'>
+            <p style='margin: 0; font-size: 11px; color: #9ca3af; display: flex; align-items: center; gap: 4px;'>
+              {{ type }} {{ id }}
+              <a href='https://www.openstreetmap.org/{{ type }}/{{ id }}' target='_blank' style='color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center;'>ℹ️</a>
+            </p>
+            <div style='display: flex; gap: 6px;'>
+              <a href='https://www.openstreetmap.org/edit?editor=id&{{ type }}={{ id }}' target='_blank' style='padding: 4px 8px; background: #22c55e; color: white; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: 600;'>iD</a>
+              <a href='http://localhost:8111/load_object?objects={{ type | slice: 0 }}{{ id }}' target='_blank' style='padding: 4px 8px; background: #3b82f6; color: white; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: 600;'>JOSM</a>
+              <a href='https://rapideditor.org/edit#id={{ type | slice: 0 }}{{ id }}' target='_blank' style='padding: 4px 8px; background: #8b5cf6; color: white; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: 600;'>Rapid</a>
+            </div>
+          </div>
+        </div>
 name: The Eight Wards of DC
 description: See DC's 8 wards. Which one are you in?
 style:
