@@ -7,6 +7,7 @@ that combines YAML and TXT files from each directory into a single .ultra file.
 """
 
 from pathlib import Path
+import re
 
 
 def main():
@@ -68,14 +69,36 @@ def main():
 
                 # Write combined content to .ultra file
                 with open(output_file, "w", encoding="utf-8") as f:
+                    # Start the YAML front matter
                     f.write("---\n")
-                    f.write(common_content)
-                    if not common_content.endswith("\n"):
-                        f.write("\n")
+
+                    # Write common content, if any
+                    if "\ncommon: common" in yaml_content:
+                        f.write(common_content)
+                        if not common_content.endswith("\n"):
+                            f.write("\n")
+                    elif "\ncommon: false" in yaml_content:
+                        pass
+                    elif re.match(r"\ncommon:\s*([a-zA-Z_]+)", yaml_content):
+                        other_common = re.match(
+                            r"\ncommon:\s*([a-zA-Z_]+)", yaml_content
+                        ).group(1)
+                        with open(
+                            f"data/{other_common}.yaml", "r", encoding="utf-8"
+                        ) as f:
+                            other_content = f.read()
+                        f.write(other_content)
+                        if not other_content.endswith("\n"):
+                            f.write("\n")
+
+                    # Remove the common line, write individual yaml
+                    yaml_content = re.sub(r"\ncommon:\s*.*(?:\n|$)", "\n", yaml_content)
                     f.write(yaml_content)
                     if not yaml_content.endswith("\n"):
                         f.write("\n")
                     f.write("---\n")
+
+                    # Write the query
                     f.write(txt_content)
 
                 print(f"Created {output_file.relative_to(project_root)}")

@@ -1,5 +1,6 @@
 name: Diplomap
 description: Welcome to the capital of the world! Check out the embassies, consulates, and residences used by diplomats from around the globe.
+common: common
 style:
   extends: https://styles.trailsta.sh/protomaps-light.json
   layers:

@@ -1,5 +1,6 @@
 name: The Eight Wards of DC
 description: See DC's 8 wards. Which one are you in?
+common: common
 style:
   extends: https://api.protomaps.com/styles/v5/white/en.json?key=f8eceeaad6896c92
   layers:
