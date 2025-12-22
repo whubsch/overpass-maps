@@ -1,0 +1,113 @@
+name: Adirondacks Peaks
+description: This SPARQL query fetches all the peaks in the Adirondack High Peaks, Saranac Lake 6ers, and Lake Placid 9ers, giving you their names, elevations in feet, coordinates, and which peak list they belong to—everything you need to plan your next summit adventure!
+type: sparql
+common: false
+server: https://query.wikidata.org/sparql
+options:
+  bounds: [-74.371948, 43.902840, -73.602905, 44.474951]
+controls:
+  - type: GeolocateControl
+    options:
+      positionOptions:
+        enableHighAccuracy: true
+      trackUserLocation: true
+popupTemplate: |
+  <div style='font-family: sans-serif; width: 300px;'>
+    <h3 style='margin: 0 0 4px 0; color: #1e40af; font-size: 22px; font-weight: 700;'>
+      {{ properties.itemLabel }}
+    </h3>
+
+    {% if properties.elevationFeet %}
+    <div style='margin: 0 0 16px 0; padding: 8px 12px; background: #dbeafe; border-radius: 6px; border-left: 4px solid #3b82f6;'>
+      <div style='font-size: 14px; color: #1e40af; font-weight: 600; margin-bottom: 2px;'>Elevation</div>
+      <div style='font-size: 24px; font-weight: 700; color: #1e3a8a;'>
+        {{ properties.elevationFeet | round }} ft
+      </div>
+      {% if properties.elevationValue %}
+      <div style='font-size: 11px; color: #64748b; margin-top: 2px;'>
+        {{ properties.elevationValue | round }} m
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <div style='font-size: 13px; color: #6b7280; line-height: 1.6;'>
+      {% if properties.partOf %}
+      <div style='margin-bottom: 8px;'>
+        <span style='font-weight: 600;'>Part of:</span>
+        <a href='{{ properties.partOf }}' target='_blank' style='color: #3b82f6; text-decoration: none;'>
+          {{ properties.partOfLabel }}
+        </a>
+      </div>
+      {% endif %}
+
+      {% if properties.item %}
+      <div>
+        <a href='{{ properties.item }}' target='_blank' style='color: #3b82f6; text-decoration: none; font-size: 12px;'>
+          View on Wikidata →
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+style:
+  extends: https://open.trailsta.sh/style.json
+  layers:
+    - type: circle
+      paint:
+        # Circle color expression
+        circle-color:
+          - case
+          # No elevation data - highlight in bright yellow
+          - ["==", ["get", "elevationFeet"], null]
+          - "#FFFF00"
+          # Part of Q137213195 - green
+          - [
+              "==",
+              ["get", "partOf"],
+              "http://www.wikidata.org/entity/Q137213195",
+            ]
+          - "#2E7D32"
+          # Part of Q4682976 - blue
+          - ["==", ["get", "partOf"], "http://www.wikidata.org/entity/Q4682976"]
+          - "#1976D2"
+          # Part of Q137213141 - pink
+          - [
+              "==",
+              ["get", "partOf"],
+              "http://www.wikidata.org/entity/Q137213141",
+            ]
+          - "#F5276C"
+          # Default fallback - gray
+          - "#757575"
+        # Circle radius based on elevation
+        circle-radius:
+          - case
+          # No elevation - fixed size
+          - ["==", ["get", "elevationFeet"], null]
+          - 8
+          # Scale based on elevation (convert to number first)
+          - [
+              "interpolate",
+              ["linear"],
+              ["to-number", ["get", "elevationFeet"]], # Convert string to number
+              0,
+              4, # 0 feet = 4px radius
+              3000,
+              8, # 3,000 feet = 8px radius
+              4000,
+              12, # 4,000 feet = 12px radius
+              5000,
+              16, # 5,000+ feet = 16px radius
+            ]
+        # Circle stroke to make them more visible
+        circle-stroke-width: 2
+        circle-stroke-color:
+          - case
+          - ["==", ["get", "elevationFeet"], null]
+          - "#FF6F00" # Orange stroke for missing elevation
+          - "#FFFFFF" # White stroke for others
+        # Optional: Add opacity
+        circle-opacity: 0.8
+        circle-stroke-opacity: 1

@@ -1,0 +1,17 @@
+SELECT ?item ?itemLabel ?elevationFeet ?coordinates ?partOf ?partOfLabel WHERE {
+  VALUES ?partOf { wd:Q137213195 wd:Q4682976 wd:Q137213141 }
+  ?item wdt:P361 ?partOf .
+  OPTIONAL {
+    ?item p:P2044 ?elevationStatement .
+    ?elevationStatement psv:P2044 ?elevationNode .
+    ?elevationNode wikibase:quantityAmount ?elevationValue .
+    ?elevationNode wikibase:quantityUnit ?elevationUnit .
+    BIND(
+      IF(?elevationUnit = wd:Q11573, ?elevationValue * 3.28084,
+        IF(?elevationUnit = wd:Q3710, ?elevationValue, ?elevationValue)
+      ) AS ?elevationFeet
+    )
+  }
+  OPTIONAL { ?item wdt:P625 ?coordinates . }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+}
