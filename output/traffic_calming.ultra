@@ -114,7 +114,7 @@ popupTemplate: |
             </div>
           </div>
         </div>
-name: Traffic calming in DC
+title: Traffic calming in DC
 description: See the wide array of traffic calming measures the District has deployed to slow drivers down.
 style:
   extends: https://styles.trailsta.sh/protomaps-light.json

@@ -114,7 +114,7 @@ popupTemplate: |
             </div>
           </div>
         </div>
-name: The Eight Wards of DC
+title: The Eight Wards of DC
 description: See DC's 8 wards. Which one are you in?
 style:
   extends: https://api.protomaps.com/styles/v5/white/en.json?key=f8eceeaad6896c92

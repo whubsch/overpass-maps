@@ -114,7 +114,7 @@ popupTemplate: |
             </div>
           </div>
         </div>
-name: Independent dining in DC
+title: Independent dining in DC
 description: Check out DC's vibrant independent food scene! This map highlights non-chain restaurants, cafes, bars, and pubs across the District. Perfect for supporting local businesses and staying away from corporate chains.
 style:
   extends: https://styles.trailsta.sh/protomaps-light.json

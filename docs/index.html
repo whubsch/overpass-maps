@@ -63,7 +63,7 @@
                         will hopefully spark inspiration for other OpenStreetMap
                         mappers. Each directory contains a different map
                         visualization showcasing unique aspects of OpenStreetMap
-                        data.
+                        and other open geospatial data.
                     </p>
                     <p class="text-gray-700 text-lg">
                         These maps are powered by
@@ -118,7 +118,7 @@
                 let description = null;
 
                 for (const line of lines) {
-                    if (line.startsWith("name:")) {
+                    if (line.startsWith("title:")) {
                         name = line.substring(5).trim();
                     } else if (line.startsWith("description:")) {
                         description = line.substring(12).trim();

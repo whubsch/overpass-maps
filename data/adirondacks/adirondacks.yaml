@@ -1,4 +1,4 @@
-name: Adirondacks Peaks
+title: Adirondacks Peaks
 description: This SPARQL query fetches all the peaks in the Adirondack High Peaks, Saranac Lake 6ers, and Lake Placid 9ers, giving you their names, elevations in feet, coordinates, and which peak list they belong to—everything you need to plan your next summit adventure!
 type: sparql
 common: false
