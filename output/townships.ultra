@@ -1,0 +1,67 @@
+---
+type: qlever
+title: Admin_level 7 in the US
+description: The mythical being of US administrative geography. Do you live in a admin_level=7 boundary?
+style:
+  extends: https://api.protomaps.com/styles/v5/white/en.json?key=f8eceeaad6896c92
+  layers:
+    - type: fill
+      paint:
+        fill-color:
+          - match
+          - [get, border_type]
+          - city
+          - "#f8a5aa"
+          - county
+          - "#a8c8e8"
+          - town
+          - "#fad4a8"
+          - township
+          - "#c4a8e0"
+          - village
+          - "#a8ddd8"
+          - census_designated_place
+          - "#f5e4a8"
+          - borough
+          - "#f5c4b0"
+          - "#dddddd"
+        fill-opacity: 0.4
+    - type: line
+      paint:
+        line-color:
+          - match
+          - [get, border_type]
+          - city
+          - "#e63946"
+          - county
+          - "#2a7ab5"
+          - town
+          - "#f4a261"
+          - township
+          - "#6a3d9a"
+          - village
+          - "#2a9d8f"
+          - census_designated_place
+          - "#e9c46a"
+          - borough
+          - "#e76f51"
+          - "#aaaaaa"
+        line-width: 2
+---
+PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+PREFIX osmrel: <https://www.openstreetmap.org/relation/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX osm: <https://www.openstreetmap.org/>
+PREFIX ogc: <http://www.opengis.net/rdf#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+
+SELECT ?region ?name ?border_type ?geometry WHERE {
+  osmrel:148838 ogc:sfContains ?region .
+  ?region osmkey:boundary "administrative" .
+  ?region osmkey:admin_level "7"^^xsd:int .
+  ?region rdf:type osm:relation .
+  ?region osmkey:name ?name .
+  ?region geo:hasGeometry/geo:asWKT ?geometry .
+  OPTIONAL { ?region osmkey:border_type ?border_type . }
+}

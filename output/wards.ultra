@@ -116,6 +116,7 @@ popupTemplate: |
         </div>
 title: The Eight Wards of DC
 description: See DC's 8 wards. Which one are you in?
+type: qlever
 style:
   extends: https://api.protomaps.com/styles/v5/white/en.json?key=f8eceeaad6896c92
   layers:
@@ -194,8 +195,18 @@ style:
         text-halo-color: "#ffffff"
         text-halo-width: 2
 ---
-[out:json][timeout:800];
-rel(162069);map_to_area->.dc;(
-  relation[boundary=administrative][admin_level=9](area.dc);
-);
-out geom;
+PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+PREFIX osmrel: <https://www.openstreetmap.org/relation/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX osm: <https://www.openstreetmap.org/>
+PREFIX ogc: <http://www.opengis.net/rdf#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+SELECT ?region ?name ?geometry WHERE {
+  osmrel:162069 ogc:sfContains ?region .
+  ?region osmkey:boundary "administrative" .
+  ?region osmkey:admin_level "9"^^xsd:int .
+  ?region rdf:type osm:relation .
+  ?region osmkey:name ?name .
+  ?region geo:hasGeometry/geo:asWKT ?geometry .
+}
