@@ -1,7 +1,7 @@
 ---
 options:
   bounds: [-77.128830, 38.797979, -76.900520, 38.993305]
-title: Rainbow Roads
+title: DC's Rainbow Roads
 description: Named roads in DC colored by the first letter of their name, revealing the alphabetical grid pattern.
 type: qlever
 style:
@@ -75,10 +75,13 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX osm: <https://www.openstreetmap.org/>
 PREFIX ogc: <http://www.opengis.net/rdf#>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-SELECT ?osm_id ?name ?geometry WHERE {
+SELECT ?osm_id ?name ?geometry ?highway WHERE {
+  VALUES ?highway { "primary" "secondary" "tertiary" "residential" "unclassified" }
   osmrel:162069 ogc:sfContains ?osm_id .
   ?osm_id rdf:type osm:way .
   ?osm_id osmkey:highway ?highway .
   ?osm_id osmkey:name ?name .
   ?osm_id geo:hasGeometry/geo:asWKT ?geometry .
+  FILTER(contains(?name, "Street"))
+  FILTER(!regex(?name, "^[0-9]"))
 }
