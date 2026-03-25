@@ -1,0 +1,6 @@
+[out:json][timeout:800];
+rel(162069);map_to_area->.dc;
+(
+  way[highway~"secondary|tertiary|residential|unclassified"][name](area.dc);
+);
+out geom;

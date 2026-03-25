@@ -1,0 +1,76 @@
+---
+options:
+  bounds: [-77.128830, 38.797979, -76.900520, 38.993305]
+title: DC rainbow streets
+description: Named roads in DC colored by the first letter of their name, revealing the alphabetical grid pattern.
+style:
+  extends: https://styles.trailsta.sh/protomaps-light.json
+  layers:
+    - type: line
+      paint:
+        line-color:
+          - let
+          - idx
+          - - index-of
+            - - slice
+              - - upcase
+                - [get, name]
+              - 0
+              - 1
+            - ABCDEFGHIJKLMNOPQRSTUVWXYZ
+          - - let
+            - t
+            - - "/"
+              - - "*"
+                - ["var", idx]
+                - - "*"
+                  - 2
+                  - [pi]
+              - 25
+            - - rgb
+              - - "*"
+                - 127.5
+                - - +
+                  - 1
+                  - - sin
+                    - ["var", t]
+              - - "*"
+                - 127.5
+                - - +
+                  - 1
+                  - - sin
+                    - - +
+                      - ["var", t]
+                      - - "/"
+                        - - "*"
+                          - 2
+                          - [pi]
+                        - 3
+              - - "*"
+                - 127.5
+                - - +
+                  - 1
+                  - - sin
+                    - - +
+                      - ["var", t]
+                      - - "/"
+                        - - "*"
+                          - 4
+                          - [pi]
+                        - 3
+        line-width:
+          - interpolate
+          - [linear]
+          - [zoom]
+          - 10
+          - 1
+          - 14
+          - 3
+        line-opacity: 0.85
+---
+[out:json][timeout:800];
+rel(162069);map_to_area->.dc;
+(
+  way[highway~"secondary|tertiary|residential|unclassified"][name](area.dc);
+);
+out geom;
