@@ -1,10 +1,11 @@
 ---
 options:
   bounds: [-77.128830, 38.797979, -76.900520, 38.993305]
-title: DC rainbow streets
+title: Rainbow Roads
 description: Named roads in DC colored by the first letter of their name, revealing the alphabetical grid pattern.
+type: qlever
 style:
-  extends: https://styles.trailsta.sh/protomaps-light.json
+  extends: https://api.protomaps.com/styles/v5/black/en.json?key=f8eceeaad6896c92
   layers:
     - type: line
       paint:
@@ -68,9 +69,16 @@ style:
           - 3
         line-opacity: 0.85
 ---
-[out:json][timeout:800];
-rel(162069);map_to_area->.dc;
-(
-  way[highway~"secondary|tertiary|residential|unclassified"][name](area.dc);
-);
-out geom;
+PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+PREFIX osmrel: <https://www.openstreetmap.org/relation/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX osm: <https://www.openstreetmap.org/>
+PREFIX ogc: <http://www.opengis.net/rdf#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+SELECT ?osm_id ?name ?geometry WHERE {
+  osmrel:162069 ogc:sfContains ?osm_id .
+  ?osm_id rdf:type osm:way .
+  ?osm_id osmkey:highway ?highway .
+  ?osm_id osmkey:name ?name .
+  ?osm_id geo:hasGeometry/geo:asWKT ?geometry .
+}
