@@ -1,0 +1,19 @@
+[out:json][timeout:125];
+rel(162069);
+map_to_area->.searchArea;
+(
+  way["highway"~"primary|secondary|tertiary|unclassified|residential"]["name"~"Street"](area.searchArea);
+) -> .allStreets;
+(
+  way["name"~"Avenue|Drive|Plaza|Place|Circle|Bridge|Parkway|Capitol|Half|Burns|Warder|Holbrook|Staples|Vista"](area.searchArea);
+  way["name"~"^[0-9]"](area.searchArea);
+) -> .exclude;
+(
+  way.allStreets;
+  - way.exclude;
+) -> .filtered;
+(
+  way.filtered;
+  way["highway"~"primary|secondary|tertiary|unclassified|residential"]["name"~"^(Ainger|Alton|Astor|Ayers|Banks|Barry|Bass|Burlington|Butterworth|Call|Clay|Cloud|Croffut|Davis|Douglas|Dubois|Eads|Edson|Elvans|Ely|Fern|Fitch|Gault|Hanna|Hilltop|Hunt|Ingomar|James|Kane|Karl|Kalmia|Lane Place|Leegate|Locust|Loud|Lyndale|Marne|Marne|Nash|Neal|Nelson|Newton|Northgate|Norton|Otis|Perry|Poplar|Primrose|Princeton|Quebec|Quincy|Redwood|Roxanna|Simms|Spruce|Stephenson|Verplanck|Wayne|Whittier|Windom|(M|T|U|V|W) Place) "](area.searchArea);
+);
+out geom;

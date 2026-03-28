@@ -3,7 +3,7 @@ options:
 title: DC's Rainbow Roads
 description: Named roads in DC colored by the first letter of their name, revealing the alphabetical grid pattern.
 common: false
-type: qlever
+type: geojson
 style:
   extends: https://api.protomaps.com/styles/v5/black/en.json?key=f8eceeaad6896c92
   layers:
